@@ -76,12 +76,14 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <RemoteCCompileToolExe>gcc</RemoteCCompileToolExe>
+    <RemoteCCompileToolExe>g++</RemoteCCompileToolExe>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="OpenFileTests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="common.h" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
