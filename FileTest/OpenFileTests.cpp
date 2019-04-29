@@ -1,10 +1,97 @@
 
 #include "common.h"
 
+
+void TestO_CREATEandO_EXCL(const char* fileName)
+{
+	int fd, step;
+
+	/*****************************************************************************
+	********************** O_CREAT ***********************************************/
+	printf("Enter a char to continue with O_CREAT\n");
+	scanf("%d", &step);
+
+	printf("Opening file with create\n");
+	//fd = open(fileName, O_RDWR | O_CREAT, 0644);
+	fd = open(fileName, O_RDWR | O_CREAT);
+	if (fd == -1)
+	{
+		perror("Error happened during opening the file Create: ");
+	}
+	else
+	{
+		printf("File opened successfully Create\n ");
+		close(fd);
+	}
+
+	printf("Enter a char to continue with O_CREATE and O_EXCL\n");
+	scanf("%d", &step);
+
+	/*****************************************************************************
+	********************** O_CREAT | O_EXCL **************************************/
+
+	printf("Opening file with O_CREATE and O_EXCL\n");
+	//fd = open(fileName, O_RDWR | O_CREAT, 0644);
+	fd = open(fileName, O_RDWR | O_CREAT | O_EXCL);
+	if (fd == -1)
+	{
+		perror("Error happened during opening the file Create and Excl: ");
+	}
+	else
+	{
+		printf("File opened successfully O_CREATE and O_EXCL\n ");
+		close(fd);
+	}
+
+	printf("Enter a char to continue\n");
+	scanf("%d", &step);
+
+}
+
+
+void TestcreatFile(const char* fileName)
+{
+	int fd, step;
+
+	printf("Enter a char to continue with creat\n");
+	scanf("%d", &step);
+
+	
+	fd = creat(fileName, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+
+	if (-1 == fd)
+	{
+		perror("Failed to creat file: ");
+	}
+	else
+	{
+		printf("Successfully created the file with creat\n");
+		close(fd);
+	}
+	
+	printf("Enter a char to continue with O_CREAT O_TRUNC \n");
+	scanf("%d", &step);
+
+	fd = open(fileName, O_RDWR | O_TRUNC | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+	if (fd == -1)
+	{
+		perror("Error happened during opening the file O_TRUNC | O_CREAT: ");
+	}
+	else
+	{
+		printf("File opened successfully O_TRUNC | O_CREAT\n ");
+		close(fd);
+	}
+
+	printf("Enter a char to continue\n");
+	scanf("%d", &step);
+
+}
+
 void TestFileOpen(const char* fileName)
 {
 	int fd;
-	
+		
 	printf("Opening file with ReadOnly flag\n");
 
 	fd = open(fileName, O_RDONLY);
@@ -12,6 +99,9 @@ void TestFileOpen(const char* fileName)
 	if (fd == -1)
 	{
 		perror("Error happened during opening the file read only: ");
+		printf("The error no is %d\n", errno);
+		if (errno == ENOENT)
+			printf("it holds\n");
 	}
 	else
 	{
@@ -68,18 +158,6 @@ void TestFileOpen(const char* fileName)
 		close(fd);
 	}
 
-	printf("Opening file with create\n");
-	fd = open(fileName, O_RDWR | O_CREAT);
-	if (fd == -1)
-	{
-		perror("Error happened during opening the file Create: ");
-	}
-	else
-	{
-		printf("File opened successfully Create\n ");
-		close(fd);
-	}
-
 	printf("Opening file with DirectIO\n");
 	fd = open(fileName, O_RDWR | O_DIRECT);
 	if (fd == -1)
@@ -116,19 +194,6 @@ void TestFileOpen(const char* fileName)
 		close(fd);
 	}
 
-	/*******
-	printf("Opening file with Create_Excl\n");
-	fd = open(fileName, O_RDWR | O_ASYNC);
-	if (fd == -1)
-	{
-		perror("Error happened during opening the file Asynchronous: ");
-	}
-	else
-	{
-		printf("File opened successfully Asynchronous\n ");
-		close(fd);
-	}
-	******/
 
 	printf("Opening file with LargeFile\n");
 	fd = open(fileName, O_RDWR | O_LARGEFILE);
@@ -206,15 +271,6 @@ void TestFileOpen(const char* fileName)
 		close(fd);
 	}
 
-
-
-
-
-
-
-
-
-
 }
 
 void TestCreateFile(const char* fileName)
@@ -253,6 +309,8 @@ void TestCreateFile(const char* fileName)
 		fd = open(fileName, O_RDWR | O_CREAT);
 		if (-1 == fd)
 			perror("Error opening file with O_CREAT: ");
+		else
+			printf("File is created successfully\n");
 
 		close(fd);
 	}
@@ -270,7 +328,63 @@ void TestCreateFile(const char* fileName)
 		}
 
 		close(fd);
+	}
 
+
+	printf("\nTesting File Creation\n");
+	printf("=====================\n");
+
+	/*printf("Creating file with ReadWrite, Truncate and Creat\n");
+	fd = open(fileName, O_RDWR | O_TRUNC | O_CREAT);
+
+	if (-1 == fd)
+	{
+		perror("Failed to create a file with ReadWrite, Truncate and Creat:");
+	}
+	else
+	{
+		printf("Successfully created the file with ReadWrite, Truncate and Creat\n");
+		close(fd);
+	}*/
+
+	printf("Creating file creat()\n");
+	//fd = creat(fileName, 0644);
+	fd = creat(fileName, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+
+	if (-1 == fd)
+	{
+		perror("Failed to creat file: ");
+	}
+	else
+	{
+		printf("Successfully created the file with creat\n");
+		close(fd);
+	}
+
+
+	printf("displaying the value of FileDecriptor when opening the file with just O_RDWR and after closing it\n");
+	fd = open(fileName, O_RDWR);
+
+	printf("File Descriptor value is %d\n", fd);
+	close(fd);
+	printf("File Descriptor value is %d\n", fd);
+
+}
+
+void TestCreatePermission(const char* fileName)
+{
+	int fd;
+
+	fd = creat(fileName, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+
+	if (-1 == fd)
+	{
+		perror("Failed to creat file: ");
+	}
+	else
+	{
+		printf("Successfully created the file with creat\n");
+		close(fd);
 	}
 
 
